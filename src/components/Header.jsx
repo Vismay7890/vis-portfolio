@@ -3,6 +3,16 @@ import { motion } from 'framer-motion';
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const isHome = window.location.pathname === '/';
+  const navItems = [
+    { label: 'Home', href: isHome ? '#home' : '/#home' },
+    { label: 'Work', href: isHome ? '#work' : '/#work' },
+    { label: 'Skills', href: isHome ? '#skills' : '/#skills' },
+    { label: 'Experience', href: isHome ? '#experience' : '/#experience' },
+    { label: 'Certifications', href: '/certifications' },
+    { label: 'Resume', href: '/resume' },
+    { label: 'Contact', href: isHome ? '#contact' : '/#contact' },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -49,11 +59,11 @@ export default function Header() {
         </span>
       </div>
 
-      <nav style={{ display: 'flex', gap: '32px' }}>
-        {['Home', 'Work', 'Skills', 'Experience', 'Contact'].map((item) => (
+      <nav className="main-nav">
+        {navItems.map((item) => (
           <a
-            key={item}
-            href={`#${item.toLowerCase()}`}
+            key={item.label}
+            href={item.href}
             style={{
               textDecoration: 'none',
               color: 'var(--text-secondary)',
@@ -66,14 +76,14 @@ export default function Header() {
             onMouseEnter={(e) => e.target.style.color = 'var(--text-primary)'}
             onMouseLeave={(e) => e.target.style.color = 'var(--text-secondary)'}
           >
-            {item}
+            {item.label}
           </a>
         ))}
       </nav>
 
       <div>
         <a
-          href="#contact"
+          href={isHome ? '#contact' : '/#contact'}
           className="glass"
           style={{
             textDecoration: 'none',

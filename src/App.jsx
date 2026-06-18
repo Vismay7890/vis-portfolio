@@ -1,9 +1,13 @@
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowUpRight, Github, Linkedin, Mail, ExternalLink, Calendar, Award, Code2, Cpu, Brain, Layers, Network, Sparkles, Terminal } from 'lucide-react';
+import { ArrowUpRight, Github, Linkedin, Mail, ExternalLink, Calendar, Cpu, Brain, Layers, Network, Sparkles, Terminal } from 'lucide-react';
 import Header from './components/Header';
 import ThreeBackground from './components/ThreeBackground';
 import HangingIDCard from './components/HangingIDCard';
+import Chatbot from './components/Chatbot';
+import CertificationsPage from './pages/CertificationsPage';
+import ResumePage from './pages/ResumePage';
+import { PROJECTS, SKILL_CARDS, EXPERIENCES } from './data/profileData';
 // import TomAndJerryChase from './components/TomAndJerryChase';
 
 // Helper component for standard scroll-reveal animations
@@ -22,6 +26,25 @@ function ScrollReveal({ children, delay = 0 }) {
 
 export default function App() {
   const { scrollYProgress } = useScroll();
+  const path = window.location.pathname;
+
+  if (path === '/certifications') {
+    return (
+      <>
+        <Header />
+        <CertificationsPage />
+      </>
+    );
+  }
+
+  if (path === '/resume') {
+    return (
+      <>
+        <Header />
+        <ResumePage />
+      </>
+    );
+  }
 
   return (
     <>
@@ -44,6 +67,7 @@ export default function App() {
         {/* FOOTER & CONTACT */}
         <FooterSection scrollYProgress={scrollYProgress} />
       </main>
+      <Chatbot />
     </>
   );
 }
@@ -88,7 +112,7 @@ function HeroSection() {
             borderRadius: '20px',
             background: 'rgba(173, 255, 47, 0.05)',
           }}>
-            <Sparkles size={14} /> GenAI Engineer @ Ideyalabs
+            <Sparkles size={14} /> GenAI Engineer
           </span>
         </motion.div>
 
@@ -175,36 +199,6 @@ function HeroSection() {
 }
 
 // ---------------- WORK SECTION (STACKING CARDS) ----------------
-const PROJECTS = [
-  {
-    id: 1,
-    title: 'Vyxion',
-    category: 'Knowledge Graph Platform (2024 - Present)',
-    desc: 'Decision intelligence platform utilizing FastAPI, Next.js, and Claude AI. Built custom graph representation engine using NetworkX for complex relationship modeling and probabilistic simulations supporting 500+ nodes at 60fps.',
-    color: 'var(--bg-accent-green)',
-    textColor: 'var(--text-dark)',
-    link: '#',
-  },
-  {
-    id: 2,
-    title: 'Code Documentation LLM Agent',
-    category: 'RAG Agent System (2024)',
-    desc: 'Designed microservice adapting developer documentation websites into intelligent LLM RAG agents. Processes 10,000+ pages via Pinecone vector stores and hybrid metadata searches to achieve sub-second 95% accurate queries.',
-    color: 'var(--bg-accent-purple)',
-    textColor: 'var(--text-dark)',
-    link: '#',
-  },
-  {
-    id: 3,
-    title: 'Sierra',
-    category: 'Voice-Activated GenAI Assistant (2024)',
-    desc: 'Voice interface using Python, Groq API, and LLaMA for intent parsing and natural language generation. Integrated custom API triggers for Spotify, WhatsApp, and DALL-E APIs.',
-    color: 'var(--bg-accent-pink)',
-    textColor: 'var(--text-dark)',
-    link: '#',
-  }
-];
-
 function WorkSection() {
   return (
     <section id="work" style={{ position: 'relative', padding: '100px 0', borderBottom: 'none', backgroundColor: '#0a0a0a' }}>
@@ -317,38 +311,14 @@ function ProjectCard({ project, index, total }) {
 }
 
 // ---------------- SKILLS SECTION (HORIZONTAL SCROLL ON VERTICAL SCROLL) ----------------
-const SKILL_CARDS = [
-  {
-    title: 'Generative AI',
-    icon: <Brain size={32} />,
-    items: ['LangGraph Agents', 'LangChain Workflows', 'Prompt Engineering', 'Model Context Protocol (MCP)']
-  },
-  {
-    title: 'Model Tuning',
-    icon: <Cpu size={32} />,
-    items: ['vLLM Inference', 'Ollama Environments', 'PEFT Fine-tuning', 'QLoRA Optimization']
-  },
-  {
-    title: 'Vector Databases',
-    icon: <Layers size={32} />,
-    items: ['Pinecone Indexing', 'ChromaDB Setup', 'Hybrid Lexical/Semantic Search', 'Knowledge Graph RAG']
-  },
-  {
-    title: 'Observability',
-    icon: <Terminal size={32} />,
-    items: ['Langfuse Tracing', 'Prometheus Monitoring', 'Token Usage tracking', 'SLA Latency analysis']
-  },
-  {
-    title: 'Backend Engineering',
-    icon: <Network size={32} />,
-    items: ['FastAPI (Python)', 'Flask Applications', 'REST API Architectures', 'SSE Data Streaming']
-  },
-  {
-    title: 'Cloud & DevOps',
-    icon: <Sparkles size={32} />,
-    items: ['Docker Containers', 'AWS S3 & EC2', 'Terraform Templates', 'GitHub Actions CI/CD']
-  }
-];
+const SKILL_ICONS = {
+  'Generative AI': <Brain size={32} />,
+  'Model Tuning': <Cpu size={32} />,
+  'Vector Databases': <Layers size={32} />,
+  Observability: <Terminal size={32} />,
+  'Backend Engineering': <Network size={32} />,
+  'Cloud & DevOps': <Sparkles size={32} />,
+};
 
 function SkillsSection() {
   const containerRef = useRef(null);
@@ -384,7 +354,7 @@ function SkillsSection() {
         justifyContent: 'center',
         padding: '0 10%',
       }}>
-        
+
         {/* Title */}
         <ScrollReveal>
           <div style={{ marginBottom: '50px' }}>
@@ -392,7 +362,7 @@ function SkillsSection() {
               My Core Capabilities
             </span>
             <h2 style={{ fontSize: 'clamp(32px, 5vw, 64px)', textTransform: 'uppercase', marginTop: '10px' }}>
-              Tech Stack Carousel
+              Core Capabilities
             </h2>
           </div>
         </ScrollReveal>
@@ -427,7 +397,7 @@ function SkillsSection() {
                 transition={{ duration: 0.3 }}
               >
                 <div style={{ color: 'var(--bg-accent-green)', marginBottom: '20px' }}>
-                  {card.icon}
+                  {SKILL_ICONS[card.title]}
                 </div>
                 <h3 style={{ fontSize: '22px', marginBottom: '16px', fontFamily: 'var(--font-display)', textTransform: 'uppercase' }}>
                   {card.title}
@@ -456,47 +426,6 @@ function SkillsSection() {
 }
 
 // ---------------- EXPERIENCE SECTION ----------------
-const EXPERIENCES = [
-  {
-    role: 'GenAI Engineer',
-    company: 'Ideyalabs',
-    duration: 'June 2025 - Present',
-    desc: [
-      'Architected Dev Agent – multi-agent code generation platform with 5 specialized agents (Architecture, Screen Planner, Frontend, Backend, Database) using LangGraph.',
-      'Built QA Agent – AI-powered test automation platform utilizing hybrid vector search with Pinecone and semantic understanding, achieving 95%+ coverage.',
-      'Designed CSX AI Customer Support Agent serving 10,000+ monthly chats, reducing latency by 90% (110s → 11s) with caching, async streams, and SSE.',
-      'Created custom Model Context Protocol (MCP) client achieving 98% faster tool execution using JSON-RPC 2.0 with autonomous loops.',
-      'Built DocAgent – codebase documentation platform traversing knowledge graphs and Pinecone RAG with React Flow.'
-    ]
-  },
-  {
-    role: 'AI Engineer',
-    company: 'Commercient LLC',
-    duration: 'June 2024 - June 2025',
-    desc: [
-      'Architected and deployed in-house LLM-powered sales assistant replacing third-party chatbot, saving $12,000 annually and improving accuracy by 35%.',
-      'Engineered multi-modal chatbot processing video/documents/images using Whisper, LLaMA Vision, and GPT Vision APIs with Pinecone RAG.',
-      'Deployed fine-tuned models over multi-GPU A100 nodes using vLLM inference engine, reducing latency by 40%.'
-    ]
-  },
-  {
-    role: 'AI/ML Intern',
-    company: 'Commercient LLC',
-    duration: 'Dec 2023 - June 2024',
-    desc: [
-      'Built production RAG system using Pinecone vector databases and OpenAI embeddings, reducing response times from 20s to 5s using semantic caching.'
-    ]
-  },
-  {
-    role: 'AI/ML Intern',
-    company: 'Logictrix Infotech',
-    duration: 'May 2023 - July 2023',
-    desc: [
-      'Fine-tuned ALBERT model for enterprise email classification, achieving 92% classification accuracy deployed on AWS Lambda with auto-scaling.'
-    ]
-  }
-];
-
 function ExperienceSection() {
   return (
     <section id="experience" style={{ backgroundColor: '#0a0a0a' }}>
@@ -562,7 +491,7 @@ function ExperienceSection() {
                     <h3 style={{ fontSize: '24px', textTransform: 'uppercase', marginBottom: '16px' }}>
                       {exp.role}
                     </h3>
-                    
+
                     <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)', listStyleType: 'square' }}>
                       {exp.desc.map((bullet, bIdx) => (
                         <li key={bIdx} style={{ marginBottom: '8px', lineHeight: 1.5, fontSize: '15px' }}>
