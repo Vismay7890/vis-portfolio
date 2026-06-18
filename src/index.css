@@ -787,10 +787,35 @@ section {
   display: none;
 }
 
-/* Hanging card layout responsive hiding */
+/* Hanging card layout */
+.hanging-card-container {
+  position: fixed;
+  top: 0;
+  right: 60px;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  perspective: 1000px;
+  transform-origin: top center;
+}
+
 @media (max-width: 1024px) {
   .hanging-card-container {
-    display: none !important;
+    right: 30px;
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 768px) {
+  .hanging-card-container {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin: 40px auto 0;
+    transform: scale(0.85);
+    transform-origin: top center;
+    z-index: 10;
   }
 }
 

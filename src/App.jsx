@@ -61,7 +61,6 @@ export default function App() {
   return (
     <>
       {/* <TomAndJerryChase /> */}
-      <HangingIDCard />
       <Header />
       <main style={{ position: 'relative' }}>
         {/* HERO SECTION */}
@@ -205,6 +204,8 @@ function HeroSection() {
             Connect / Contact
           </a>
         </motion.div>
+        
+        <HangingIDCard />
       </div>
     </section>
   );

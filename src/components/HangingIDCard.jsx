@@ -58,19 +58,7 @@ export default function HangingIDCard() {
   };
 
   return (
-    <div
-      className="hanging-card-container"
-      style={{
-        position: 'fixed',
-        top: 0,
-        right: '60px',
-        zIndex: 2000,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        perspective: '1000px',
-      }}
-    >
+    <div className="hanging-card-container">
       {/* Lanyard Line (Dynamic SVG connecting top of screen to the clip) */}
       <svg
         style={{
