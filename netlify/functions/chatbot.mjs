@@ -135,44 +135,6 @@ Always prioritize factual accuracy over conversational creativity.`;
   return data.choices?.[0]?.message?.content?.trim();
 }
 
-async function isProfileQuery(message) {
-  try {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${GROQ_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: GROQ_CHAT_MODEL,
-        temperature: 0,
-        max_tokens: 5,
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You are a security guard classifying user queries for Vismay Jain\'s portfolio chatbot. Check if the query is a genuine question about Vismay Jain, his professional background, skills, work experience, projects, certifications, or portfolio. Answer ONLY "yes" or "no". Do not include any other words.',
-          },
-          {
-            role: 'user',
-            content: message,
-          },
-        ],
-      }),
-    });
-
-    if (!response.ok) {
-      return true; // Fallback to let the query pass
-    }
-
-    const data = await response.json();
-    const choice = data.choices?.[0]?.message?.content?.trim().toLowerCase() || '';
-    return choice.includes('yes');
-  } catch (error) {
-    return true; // Fallback to let the query pass on network/parsing issues
-  }
-}
-
 export async function handler(event) {
   if (event.httpMethod === 'OPTIONS') {
     return json(200, {});
@@ -192,17 +154,12 @@ export async function handler(event) {
       return json(400, { error: 'Missing message.' });
     }
 
-    // Guardrail Check
-    const genuine = await isProfileQuery(message);
-    if (!genuine) {
-      return json(200, {
-        answer: "good try , i won't waste tokens here bud",
-        sources: [],
-      });
-    }
-
     const vector = await embedText(message);
-    const matches = await queryPinecone(vector);
+    const rawMatches = await queryPinecone(vector);
+    
+    // Filter out irrelevant context matches (score threshold > 0.3)
+    const matches = rawMatches.filter((match) => match.score > 0.3);
+    
     const answer = await answerWithContext(message, history, matches);
 
     return json(200, {
