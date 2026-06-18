@@ -5,6 +5,9 @@
   # Directory where built files are generated
   publish = "dist"
 
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "OPENAI_EMBEDDING_MODEL,GROQ_CHAT_MODEL"
+
 # Single Page Application (SPA) redirect rule
 [[redirects]]
   from = "/*"
