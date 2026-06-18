@@ -772,11 +772,29 @@ section {
   }
 }
 
-@media (max-width: 980px) {
-  .main-nav {
-    max-width: 52vw;
-  }
+/* Navigation display selectors */
+.desktop-nav {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
 
+.desktop-nav-cta {
+  display: block;
+}
+
+.mobile-menu-toggle {
+  display: none;
+}
+
+/* Hanging card layout responsive hiding */
+@media (max-width: 1024px) {
+  .hanging-card-container {
+    display: none !important;
+  }
+}
+
+@media (max-width: 980px) {
   .cert-grid,
   .resume-content-grid,
   .resume-hero-layout,
@@ -789,36 +807,33 @@ section {
   }
 }
 
-@media (max-width: 720px) {
-  header.glass {
-    padding: 0 16px !important;
-  }
-
-  header.glass>div:first-child,
-  header.glass>div:last-child {
+@media (max-width: 768px) {
+  .desktop-nav,
+  .desktop-nav-cta {
     display: none !important;
   }
 
-  .main-nav {
-    max-width: 100%;
-    width: 100%;
-    justify-content: flex-start;
-    gap: 18px;
+  .mobile-menu-toggle {
+    display: block !important;
+  }
+
+  header.glass {
+    padding: 0 20px !important;
   }
 
   .cert-hero,
   .resume-hero {
     min-height: 86vh;
-    padding-left: 7%;
-    padding-right: 7%;
+    padding-left: 6%;
+    padding-right: 6%;
   }
 
   .cert-grid-section,
   .resume-content-section,
   .resume-timeline-section,
   .proof-strip {
-    padding-left: 7%;
-    padding-right: 7%;
+    padding-left: 6%;
+    padding-right: 6%;
   }
 
   .cert-card {
@@ -838,4 +853,26 @@ section {
     right: 16px;
     bottom: 16px;
   }
+}
+
+/* Mobile scroll snap carousel */
+.skills-carousel-container {
+  width: 100%;
+  overflow-x: auto !important;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.skills-carousel-container::-webkit-scrollbar {
+  display: none !important;
+}
+.skills-carousel-track {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+}
+.skills-card-mobile {
+  scroll-snap-align: center;
+  flex-shrink: 0;
 }

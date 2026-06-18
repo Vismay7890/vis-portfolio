@@ -59,6 +59,7 @@ export default function HangingIDCard() {
 
   return (
     <div
+      className="hanging-card-container"
       style={{
         position: 'fixed',
         top: 0,

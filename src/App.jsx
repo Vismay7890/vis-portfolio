@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ArrowUpRight, Github, Linkedin, Mail, ExternalLink, Calendar, Cpu, Brain, Layers, Network, Sparkles, Terminal } from 'lucide-react';
 import Header from './components/Header';
@@ -8,6 +8,18 @@ import Chatbot from './components/Chatbot';
 import CertificationsPage from './pages/CertificationsPage';
 import ResumePage from './pages/ResumePage';
 import { PROJECTS, SKILL_CARDS, EXPERIENCES } from './data/profileData';
+
+// Custom hook to detect mobile screens
+function useMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  return isMobile;
+}
 // import TomAndJerryChase from './components/TomAndJerryChase';
 
 // Helper component for standard scroll-reveal animations
@@ -227,7 +239,8 @@ function WorkSection() {
 
 function ProjectCard({ project, index, total }) {
   const containerRef = useRef(null);
-  const stickyTop = 120 + index * 40;
+  const isMobile = useMobile();
+  const stickyTop = isMobile ? 80 : 120 + index * 40;
 
   return (
     <div
@@ -236,7 +249,7 @@ function ProjectCard({ project, index, total }) {
         position: 'sticky',
         top: `${stickyTop}px`,
         width: '100%',
-        minHeight: '450px',
+        minHeight: isMobile ? '340px' : '450px',
         marginBottom: index === total - 1 ? '100px' : '0px',
       }}
     >
@@ -245,44 +258,45 @@ function ProjectCard({ project, index, total }) {
           style={{
             width: '100%',
             height: '100%',
-            minHeight: '450px',
-            borderRadius: '32px',
+            minHeight: isMobile ? '340px' : '450px',
+            borderRadius: isMobile ? '24px' : '32px',
             backgroundColor: project.color,
             color: project.textColor,
-            padding: '60px',
+            padding: isMobile ? '32px 24px' : '60px',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
             border: '1px solid rgba(255,255,255,0.1)',
             boxShadow: '0 30px 60px rgba(0,0,0,0.4)',
           }}
-          whileHover={{ scale: 0.98 }}
+          whileHover={isMobile ? undefined : { scale: 0.98 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile ? 'column-reverse' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', width: '100%', gap: isMobile ? '16px' : '0' }}>
             <div>
-              <span style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.8 }}>
+              <span style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.1em', opacity: 0.8 }}>
                 {project.category}
               </span>
-              <h3 style={{ fontSize: 'clamp(28px, 4vw, 44px)', textTransform: 'uppercase', marginTop: '10px', lineHeight: 1.1 }}>
+              <h3 style={{ fontSize: 'clamp(24px, 4vw, 44px)', textTransform: 'uppercase', marginTop: '6px', lineHeight: 1.1 }}>
                 {project.title}
               </h3>
             </div>
             <div style={{
               border: '2px solid currentColor',
               borderRadius: '50%',
-              width: '60px',
-              height: '60px',
+              width: isMobile ? '48px' : '60px',
+              height: isMobile ? '48px' : '60px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              flexShrink: 0,
             }}>
-              <ExternalLink size={24} />
+              <ExternalLink size={isMobile ? 18 : 24} />
             </div>
           </div>
 
-          <div style={{ maxWidth: '650px', alignSelf: 'flex-start' }}>
-            <p style={{ fontSize: '17px', fontWeight: 400, opacity: 0.9, marginBottom: '24px', lineHeight: 1.5 }}>
+          <div style={{ maxWidth: '650px', alignSelf: 'flex-start', marginTop: isMobile ? '24px' : '0' }}>
+            <p style={{ fontSize: isMobile ? '15px' : '17px', fontWeight: 400, opacity: 0.9, marginBottom: '24px', lineHeight: 1.5 }}>
               {project.desc}
             </p>
             <a
@@ -291,7 +305,7 @@ function ProjectCard({ project, index, total }) {
                 color: 'inherit',
                 textDecoration: 'none',
                 fontWeight: 600,
-                fontSize: '14px',
+                fontSize: '13px',
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em',
                 display: 'inline-flex',
@@ -322,6 +336,7 @@ const SKILL_ICONS = {
 
 function SkillsSection() {
   const containerRef = useRef(null);
+  const isMobile = useMobile();
 
   // Measure scroll progress relative to this specific container
   const { scrollYProgress } = useScroll({
@@ -338,26 +353,27 @@ function SkillsSection() {
       ref={containerRef}
       style={{
         position: 'relative',
-        height: '300vh', // High height to capture vertical scroll
+        height: isMobile ? 'auto' : '300vh', // High height on desktop to capture vertical scroll
         backgroundColor: 'var(--bg-secondary)',
+        padding: isMobile ? '80px 0' : '0',
       }}
     >
       {/* Sticky container wrapping the carousel view */}
       <div style={{
-        position: 'sticky',
+        position: isMobile ? 'relative' : 'sticky',
         top: 0,
-        height: '100vh',
+        height: isMobile ? 'auto' : '100vh',
         width: '100%',
-        overflow: 'hidden',
+        overflow: isMobile ? 'visible' : 'hidden',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        padding: '0 10%',
+        padding: isMobile ? '0 20px' : '0 10%',
       }}>
 
         {/* Title */}
         <ScrollReveal>
-          <div style={{ marginBottom: '50px' }}>
+          <div style={{ marginBottom: isMobile ? '30px' : '50px' }}>
             <span style={{ fontSize: '14px', color: 'var(--bg-accent-green)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
               My Core Capabilities
             </span>
@@ -368,28 +384,33 @@ function SkillsSection() {
         </ScrollReveal>
 
         {/* Carousel Viewport Wrapper */}
-        <div style={{ width: '100%', overflow: 'visible' }}>
+        <div
+          className={isMobile ? "skills-carousel-container" : ""}
+          style={{ width: '100%', overflow: isMobile ? 'auto' : 'visible' }}
+        >
           <motion.div
+            className={isMobile ? "skills-carousel-track" : ""}
             style={{
               display: 'flex',
-              gap: '40px',
-              x: xTranslate, // Translate horizontally
+              gap: isMobile ? '20px' : '40px',
+              x: isMobile ? 0 : xTranslate, // Translate horizontally only on desktop
               width: 'max-content',
+              paddingBottom: isMobile ? '20px' : '0',
             }}
           >
             {SKILL_CARDS.map((card, idx) => (
               <motion.div
                 key={idx}
-                className="glass"
+                className={`glass ${isMobile ? "skills-card-mobile" : ""}`}
                 style={{
-                  width: '380px',
-                  minHeight: '280px',
-                  padding: '40px 30px',
+                  width: isMobile ? '280px' : '380px',
+                  minHeight: isMobile ? '240px' : '280px',
+                  padding: isMobile ? '30px 24px' : '40px 30px',
                   borderRadius: '24px',
                   backgroundColor: 'rgba(255,255,255,0.01)',
                   flexShrink: 0,
                 }}
-                whileHover={{
+                whileHover={isMobile ? undefined : {
                   y: -8,
                   backgroundColor: 'rgba(255,255,255,0.03)',
                   borderColor: 'var(--bg-accent-green)',
@@ -399,7 +420,7 @@ function SkillsSection() {
                 <div style={{ color: 'var(--bg-accent-green)', marginBottom: '20px' }}>
                   {SKILL_ICONS[card.title]}
                 </div>
-                <h3 style={{ fontSize: '22px', marginBottom: '16px', fontFamily: 'var(--font-display)', textTransform: 'uppercase' }}>
+                <h3 style={{ fontSize: '20px', marginBottom: '16px', fontFamily: 'var(--font-display)', textTransform: 'uppercase' }}>
                   {card.title}
                 </h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -407,7 +428,7 @@ function SkillsSection() {
                     <span
                       key={iIdx}
                       style={{
-                        fontSize: '14px',
+                        fontSize: '13px',
                         color: 'var(--text-secondary)',
                         display: 'block',
                       }}
@@ -512,28 +533,29 @@ function ExperienceSection() {
 
 // ---------------- FOOTER & CONTACT SECTION ----------------
 function FooterSection({ scrollYProgress }) {
-  const xTranslation = useTransform(scrollYProgress, [0, 1], [0, -900]);
+  const isMobile = useMobile();
+  const xTranslation = useTransform(scrollYProgress, [0, 1], [0, isMobile ? -300 : -900]);
 
   return (
-    <section id="contact" style={{ backgroundColor: '#000', padding: '100px 0 40px 0', borderBottom: 'none' }}>
+    <section id="contact" style={{ backgroundColor: '#000', padding: isMobile ? '60px 0 30px 0' : '100px 0 40px 0', borderBottom: 'none' }}>
       {/* Scroll responsive marquee */}
       <div style={{
         overflow: 'hidden',
         whiteSpace: 'nowrap',
         width: '100%',
         borderBottom: '1px solid rgba(255,255,255,0.08)',
-        paddingBottom: '60px',
-        marginBottom: '60px',
+        paddingBottom: isMobile ? '30px' : '60px',
+        marginBottom: isMobile ? '40px' : '60px',
       }}>
         <motion.div
           style={{
             display: 'inline-flex',
-            fontSize: 'clamp(60px, 12vw, 150px)',
+            fontSize: 'clamp(44px, 8vw, 150px)',
             fontWeight: 800,
             textTransform: 'uppercase',
             fontFamily: 'var(--font-display)',
             letterSpacing: '-0.02em',
-            gap: '80px',
+            gap: isMobile ? '40px' : '80px',
             color: 'transparent',
             WebkitTextStroke: '1px rgba(255,255,255,0.15)',
             x: xTranslation,
@@ -544,8 +566,8 @@ function FooterSection({ scrollYProgress }) {
         </motion.div>
       </div>
 
-      <div className="container" style={{ padding: '0 10%' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '60px', marginBottom: '80px' }}>
+      <div className="container" style={{ padding: '0 6%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))', gap: isMobile ? '40px' : '60px', marginBottom: isMobile ? '40px' : '80px' }}>
           <div>
             <ScrollReveal>
               <h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', textTransform: 'uppercase', marginBottom: '24px' }}>
@@ -658,7 +680,7 @@ function FooterSection({ scrollYProgress }) {
             © {new Date().getFullYear()} Vismay Jain. All rights reserved.
           </p>
           <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-            GenAI Engineer Portfolio
+            Thanks For Visiting
           </p>
         </div>
       </div>

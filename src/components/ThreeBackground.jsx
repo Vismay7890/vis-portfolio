@@ -75,8 +75,24 @@ export default function ThreeBackground() {
       mouse.active = false;
     };
 
+    const handleTouchMove = (e) => {
+      if (e.touches.length === 0) return;
+      const touch = e.touches[0];
+      const rect = containerRef.current.getBoundingClientRect();
+      mouse.targetX = ((touch.clientX - rect.left) / rect.width) * gridWidth - gridWidth / 2;
+      mouse.targetY = -((touch.clientY - rect.top) / rect.height) * gridHeight + gridHeight / 2;
+      mouse.active = true;
+    };
+
+    const handleTouchEnd = () => {
+      mouse.active = false;
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchstart', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd);
 
     // 5. Physics Deformation & Wave Animation Loop
     let clock = new THREE.Clock();
@@ -154,6 +170,9 @@ export default function ThreeBackground() {
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseleave', handleMouseLeave);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchstart', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
       window.removeEventListener('resize', handleResize);
       if (containerRef.current) {
         containerRef.current.removeChild(renderer.domElement);
