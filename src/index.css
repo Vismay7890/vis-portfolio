@@ -607,14 +607,50 @@ section {
   display: grid;
   place-items: center;
   position: relative;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.45),
+    inset 0 0 10px rgba(255, 255, 255, 0.15),
+    inset 0 0 2px 1px rgba(173, 255, 47, 0.3);
   overflow: hidden;
+  z-index: 1;
+}
+
+.chatbot-toggle::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    transparent,
+    rgba(173, 255, 47, 0.25) 10%,
+    transparent 20%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.2) 60%,
+    transparent 70%
+  );
+  animation: siriGlazeSpin 5s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.chatbot-toggle > * {
+  position: relative;
+  z-index: 2;
 }
 
 .chatbot-toggle span {
   position: absolute;
   inset: 0;
   border-radius: 50%;
+  z-index: 1;
+}
+
+@keyframes siriGlazeSpin {
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .chatbot-panel {
@@ -628,8 +664,8 @@ section {
   -webkit-backdrop-filter: blur(22px);
   overflow: hidden;
   box-shadow: 0 34px 90px rgba(0, 0, 0, 0.55);
-  display: grid;
-  grid-template-rows: auto 1fr auto auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .chatbot-header {
@@ -684,6 +720,7 @@ section {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  flex: 1;
 }
 
 .chatbot-message {
@@ -900,4 +937,115 @@ section {
 .skills-card-mobile {
   scroll-snap-align: center;
   flex-shrink: 0;
+}
+
+/* Chatbot Voice & Tooltip Styles */
+.chatbot-flash-tooltip {
+  position: absolute;
+  bottom: 80px;
+  right: 0;
+  background: rgba(10, 10, 10, 0.9);
+  color: var(--bg-accent-green);
+  border: 1px solid rgba(173, 255, 47, 0.3);
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(173, 255, 47, 0.15);
+  cursor: pointer;
+  z-index: 2600;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: tooltipPulse 2s infinite ease-in-out;
+}
+
+.chatbot-flash-tooltip:hover {
+  background: rgba(173, 255, 47, 0.1);
+  border-color: var(--bg-accent-green);
+}
+
+.chatbot-flash-tooltip .tooltip-arrow {
+  position: absolute;
+  bottom: -6px;
+  right: 24px;
+  width: 10px;
+  height: 10px;
+  background: rgba(10, 10, 10, 0.9);
+  border-right: 1px solid rgba(173, 255, 47, 0.3);
+  border-bottom: 1px solid rgba(173, 255, 47, 0.3);
+  transform: rotate(45deg);
+}
+
+.voice-indicator {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.voice-indicator.listening {
+  color: var(--bg-accent-green);
+  animation: textGlow 1.5s infinite ease-in-out;
+}
+
+.voice-indicator.speaking {
+  color: #38bdf8; /* light blue */
+}
+
+.chatbot-voice-toggle {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chatbot-voice-toggle:hover {
+  transform: scale(1.08);
+}
+
+.chatbot-voice-toggle.active {
+  box-shadow: 0 0 12px rgba(173, 255, 47, 0.4);
+}
+
+@keyframes tooltipPulse {
+  0%, 100% {
+    transform: translateY(0);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(173, 255, 47, 0.15);
+  }
+  50% {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(173, 255, 47, 0.3);
+  }
+}
+
+@keyframes textGlow {
+  0%, 100% {
+    opacity: 0.7;
+    text-shadow: 0 0 0px rgba(173, 255, 47, 0);
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 8px rgba(173, 255, 47, 0.6);
+  }
+}
+
+.chatbot-voice-wave-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  height: 48px;
+  overflow: hidden;
 }
