@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform, animate } from 'framer-motion';
 import vismayImg from '../public/Vismay.jpg';
 
 export default function HangingIDCard() {
@@ -22,14 +22,16 @@ export default function HangingIDCard() {
   // Rotate based on horizontal drag distance to simulate string swing angle
   const rotateZ = useTransform(x, [-200, 200], [-30, 30]);
 
-  // Combine drag rotation and mouse hover tilt rotation
-  const combinedRotateY = useTransform([x, rotateY], ([latestX, latestRotY]) => {
+  // Dynamic flip angle controlled via smooth spring
+  const flipAngle = useMotionValue(0);
+  const smoothFlipAngle = useSpring(flipAngle, { stiffness: 100, damping: 15 });
+
+  // Combine drag rotation, flip rotation, and mouse hover tilt rotation
+  const combinedRotateY = useTransform([x, rotateY, smoothFlipAngle], ([latestX, latestRotY, latestFlip]) => {
     // Basic swing rotation from drag
     const dragRotY = (latestX / 200) * 15;
-    // Toggled flip angle + mouse hover tilt
-    const baseFlip = isFlipped ? 180 : 0;
     // Combine them
-    return baseFlip + dragRotY + latestRotY;
+    return latestFlip + dragRotY + latestRotY;
   });
 
   const handleMouseMove = (e) => {
@@ -126,7 +128,11 @@ export default function HangingIDCard() {
         {/* Card Container (3D Hover-Tilt & Flip Effect) */}
         <div
           ref={cardRef}
-          onClick={() => setIsFlipped(!isFlipped)}
+          onClick={() => {
+            const nextFlipped = !isFlipped;
+            setIsFlipped(nextFlipped);
+            animate(flipAngle, nextFlipped ? 180 : 0, { type: 'spring', stiffness: 90, damping: 16 });
+          }}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           style={{

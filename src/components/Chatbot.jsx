@@ -83,7 +83,7 @@ export default function Chatbot() {
   const [messages, setMessages] = useState(initialMessages);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   // Voice feature states
   const [voiceActive, setVoiceActive] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -95,8 +95,18 @@ export default function Chatbot() {
   const elevenLabsAudioRef = useRef(null);
   const visibleSeeds = useMemo(() => CHATBOT_SEED_QUESTIONS.slice(0, 4), []);
 
+  const initializeAudio = () => {
+    if (!elevenLabsAudioRef.current && typeof window !== 'undefined') {
+      const audio = new Audio();
+      audio.src = "data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAAA"; // 1-second silent WAV file
+      audio.play().catch(() => {});
+      elevenLabsAudioRef.current = audio;
+    }
+  };
+
   // Request mic permission
   const requestMicAndActivate = async () => {
+    initializeAudio();
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       stream.getTracks().forEach((track) => track.stop());
@@ -114,6 +124,7 @@ export default function Chatbot() {
 
   // Toggle voice mode manually inside the chat
   const handleVoiceToggle = async () => {
+    initializeAudio();
     if (voiceActive) {
       setVoiceActive(false);
     } else {
@@ -175,14 +186,17 @@ export default function Chatbot() {
   // Play ElevenLabs audio
   const playElevenLabsAudio = (base64Audio) => {
     window.speechSynthesis.cancel();
-    if (elevenLabsAudioRef.current) {
-      try {
-        elevenLabsAudioRef.current.pause();
-      } catch (e) {}
+    
+    if (!elevenLabsAudioRef.current) {
+      elevenLabsAudioRef.current = new Audio();
     }
+    
+    const audio = elevenLabsAudioRef.current;
+    try {
+      audio.pause();
+    } catch (e) { }
 
-    const audio = new Audio("data:audio/mpeg;base64," + base64Audio);
-    elevenLabsAudioRef.current = audio;
+    audio.src = "data:audio/mpeg;base64," + base64Audio;
 
     audio.onplay = () => {
       setIsSpeaking(true);
@@ -257,11 +271,26 @@ export default function Chatbot() {
     window.speechSynthesis.speak(utterance);
   };
 
+  const lastSpokenMessageRef = useRef(null);
+
+  // When voice mode is activated, mark the current last message as "spoken" so we don't read it
+  useEffect(() => {
+    if (voiceActive && messages.length > 0) {
+      lastSpokenMessageRef.current = messages[messages.length - 1];
+    }
+  }, [voiceActive]);
+
   // Speak when a new assistant message is received
   useEffect(() => {
     if (messages.length === 0) return;
     const lastMessage = messages[messages.length - 1];
-    if (lastMessage.role === 'assistant' && voiceActive && open) {
+    if (
+      lastMessage.role === 'assistant' &&
+      lastMessage !== lastSpokenMessageRef.current &&
+      voiceActive &&
+      open
+    ) {
+      lastSpokenMessageRef.current = lastMessage;
       if (lastMessage.audio) {
         playElevenLabsAudio(lastMessage.audio);
       } else {
@@ -276,13 +305,13 @@ export default function Chatbot() {
       if (recognitionRef.current) {
         try {
           recognitionRef.current.abort();
-        } catch (e) {}
+        } catch (e) { }
       }
       window.speechSynthesis.cancel();
       if (elevenLabsAudioRef.current) {
         try {
           elevenLabsAudioRef.current.pause();
-        } catch (e) {}
+        } catch (e) { }
       }
       setIsListening(false);
       setIsSpeaking(false);
@@ -314,7 +343,7 @@ export default function Chatbot() {
         if (elevenLabsAudioRef.current) {
           try {
             elevenLabsAudioRef.current.pause();
-          } catch (e) {}
+          } catch (e) { }
         }
         setIsSpeaking(false);
         setInput('');
@@ -364,13 +393,13 @@ export default function Chatbot() {
       if (recognitionRef.current) {
         try {
           recognitionRef.current.abort();
-        } catch (e) {}
+        } catch (e) { }
       }
       window.speechSynthesis.cancel();
       if (elevenLabsAudioRef.current) {
         try {
           elevenLabsAudioRef.current.pause();
-        } catch (e) {}
+        } catch (e) { }
       }
     };
   }, [open, voiceActive]);
@@ -421,7 +450,7 @@ export default function Chatbot() {
               ))}
               {loading && (
                 <motion.div className="chatbot-message assistant loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                  <Loader2 size={16} /> Searching Pinecone
+                  <Loader2 size={16} /> thinking
                 </motion.div>
               )}
             </div>
@@ -446,6 +475,7 @@ export default function Chatbot() {
               className="chatbot-input"
               onSubmit={(event) => {
                 event.preventDefault();
+                initializeAudio();
                 sendMessage(input);
               }}
             >

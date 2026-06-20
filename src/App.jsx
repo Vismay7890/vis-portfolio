@@ -123,7 +123,7 @@ function HeroSection() {
             borderRadius: '20px',
             background: 'rgba(173, 255, 47, 0.05)',
           }}>
-            <Sparkles size={14} /> GenAI Engineer
+            GenAI Engineer
           </span>
         </motion.div>
 
@@ -185,7 +185,7 @@ function HeroSection() {
               boxShadow: '0 8px 30px rgba(173, 255, 47, 0.2)',
             }}
           >
-            Selected Projects <ArrowUpRight size={18} />
+            Projects <ArrowUpRight size={18} />
           </a>
           <a
             href="#contact"
@@ -204,7 +204,7 @@ function HeroSection() {
             Connect / Contact
           </a>
         </motion.div>
-        
+
         <HangingIDCard />
       </div>
     </section>
@@ -574,16 +574,20 @@ function FooterSection({ scrollYProgress }) {
               <h2 style={{ fontSize: 'clamp(28px, 4vw, 48px)', textTransform: 'uppercase', marginBottom: '24px' }}>
                 Let's build<br />intelligent systems.
               </h2>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '40px', maxWidth: '380px' }}>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', maxWidth: '380px' }}>
                 Interested in agentic architectures, RAG solutions, or custom fine-tuning projects? Let's connect.
               </p>
+              <div style={{ color: 'var(--text-primary)', marginBottom: '32px', fontSize: '15px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div>Email: <a href="mailto:ai20.vismay.jain@gmail.com" style={{ color: 'var(--bg-accent-green)', textDecoration: 'none' }}>ai20.vismay.jain@gmail.com</a></div>
+                <div>Phone: <a href="tel:+916351464527" style={{ color: 'var(--bg-accent-green)', textDecoration: 'none' }}>+91 6351464527</a></div>
+              </div>
             </ScrollReveal>
 
             <div style={{ display: 'flex', gap: '20px' }}>
-              <a href="https://github.com" target="_blank" rel="noreferrer" className="glass" style={{ width: '48px', height: '48px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-primary)' }}>
+              <a href="https://github.com/VISMAY7890" target="_blank" rel="noreferrer" className="glass" style={{ width: '48px', height: '48px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-primary)' }}>
                 <Github size={20} />
               </a>
-              <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="glass" style={{ width: '48px', height: '48px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-primary)' }}>
+              <a href="https://www.linkedin.com/in/vismay-jain-a06b0b203/" target="_blank" rel="noreferrer" className="glass" style={{ width: '48px', height: '48px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-primary)' }}>
                 <Linkedin size={20} />
               </a>
               <a href="mailto:ai20.vismay.jain@gmail.com" className="glass" style={{ width: '48px', height: '48px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-primary)' }}>
@@ -594,11 +598,23 @@ function FooterSection({ scrollYProgress }) {
 
           <div>
             <ScrollReveal delay={0.2}>
-              <form style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  const name = e.target.elements.name.value;
+                  const email = e.target.elements.email.value;
+                  const message = e.target.elements.message.value;
+                  const subject = encodeURIComponent(`Portfolio Inquiry from ${name}`);
+                  const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`);
+                  window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=ai20.vismay.jain@gmail.com&su=${subject}&body=${body}`, '_blank');
+                }}
+                style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
+              >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <label style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)' }}>Name</label>
                   <input
                     type="text"
+                    name="name"
                     placeholder="Your Name"
                     className="glass"
                     style={{
@@ -608,12 +624,14 @@ function FooterSection({ scrollYProgress }) {
                       color: 'var(--text-primary)',
                       outline: 'none',
                     }}
+                    required
                   />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <label style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)' }}>Email</label>
                   <input
                     type="email"
+                    name="email"
                     placeholder="you@domain.com"
                     className="glass"
                     style={{
@@ -623,11 +641,13 @@ function FooterSection({ scrollYProgress }) {
                       color: 'var(--text-primary)',
                       outline: 'none',
                     }}
+                    required
                   />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <label style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)' }}>Message</label>
                   <textarea
+                    name="message"
                     placeholder="Describe your AI agent scope or engineering project..."
                     rows={4}
                     className="glass"
@@ -639,6 +659,7 @@ function FooterSection({ scrollYProgress }) {
                       outline: 'none',
                       resize: 'none',
                     }}
+                    required
                   />
                 </div>
 

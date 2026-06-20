@@ -71,7 +71,7 @@ export default function Header() {
             letterSpacing: '-0.03em',
             color: 'var(--text-primary)'
           }}>
-            WELCOME<span style={{ color: 'var(--bg-accent-green)' }}>.</span>
+            bienvenu<span style={{ color: 'var(--bg-accent-green)' }}>.</span>
           </span>
         </div>
 
