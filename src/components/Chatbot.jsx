@@ -108,6 +108,11 @@ export default function Chatbot() {
   const requestMicAndActivate = async () => {
     initializeAudio();
     try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        alert('Microphone access is unavailable. Secure HTTPS connection is required for voice features on mobile devices.');
+        setOpen(true);
+        return false;
+      }
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       stream.getTracks().forEach((track) => track.stop());
       setShowFlashTooltip(false);
